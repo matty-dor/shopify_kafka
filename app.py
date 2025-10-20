@@ -25,6 +25,8 @@ def shopify_webhook():
     }
 
     r = requests.post(KAFKA_REST_ENDPOINT, headers=headers, json=payload)
+    #ChatGPT Suggested code to prove where the response is landing
+    app.logger.info("Kafka REST status=%s body=%s", r.status_code, r.text)
     if r.status_code >= 300:
         print("Kafka post failed:", r.text)
         return "Kafka error", 500
