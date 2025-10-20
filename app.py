@@ -4,7 +4,8 @@ import requests, json, base64, os
 app = Flask(__name__)
 
 KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "shopify_demo")
-KAFKA_REST_ENDPOINT = f"https://{os.getenv('KAFKA_REST_HOST')}/kafka/v3/clusters/{os.getenv('KAFKA_CLUSTER_ID')}/topics/{KAFKA_TOPIC}"
+#Added "/records" to the end of the rest endpoint below after getting a Render error and getting help from ChatGPT
+KAFKA_REST_ENDPOINT = f"https://{os.getenv('KAFKA_REST_HOST')}/kafka/v3/clusters/{os.getenv('KAFKA_CLUSTER_ID')}/topics/{KAFKA_TOPIC}/records"
 KAFKA_API_KEY = os.getenv("KAFKA_API_KEY")
 KAFKA_API_SECRET = os.getenv("KAFKA_API_SECRET")
 
