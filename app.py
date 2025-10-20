@@ -1,0 +1,37 @@
+from flask import Flask, request
+import requests, json, base64, os
+
+app = Flask(__name__)
+
+KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "shopify_demo")
+KAFKA_REST_ENDPOINT = f"https://{os.getenv('KAFKA_REST_HOST')}/kafka/v3/clusters/{os.getenv('KAFKA_CLUSTER_ID')}/topics/{KAFKA_TOPIC}"
+KAFKA_API_KEY = os.getenv("KAFKA_API_KEY")
+KAFKA_API_SECRET = os.getenv("KAFKA_API_SECRET")
+
+@app.route("/shopify", methods=["POST"])
+def shopify_webhook():
+    event = request.get_json()
+    if not event:
+        return "No JSON", 400
+
+    payload = {"records": [{"value": event}]}
+
+    auth = base64.b64encode(f"{KAFKA_API_KEY}:{KAFKA_API_SECRET}".encode()).decode()
+    headers = {
+        "Content-Type": "application/vnd.kafka.json.v2+json",
+        "Authorization": f"Basic {auth}"
+    }
+
+    r = requests.post(KAFKA_REST_ENDPOINT, headers=headers, json=payload)
+    if r.status_code >= 300:
+        print("Kafka post failed:", r.text)
+        return "Kafka error", 500
+
+    return "", 200
+
+@app.route("/", methods=["GET"])
+def health():
+    return "OK", 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
