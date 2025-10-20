@@ -19,7 +19,8 @@ def shopify_webhook():
 
     auth = base64.b64encode(f"{KAFKA_API_KEY}:{KAFKA_API_SECRET}".encode()).decode()
     headers = {
-        "Content-Type": "application/vnd.kafka.json.v2+json",
+        #Change content type from "application/vnd.kafka.json.v2+json"
+        "Content-Type": "application/json",
         "Authorization": f"Basic {auth}"
     }
 
