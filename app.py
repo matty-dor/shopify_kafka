@@ -15,7 +15,13 @@ def shopify_webhook():
     if not event:
         return "No JSON", 400
 
-    payload = {"records": [{"value": event}]}
+    #original value of payload was: payload = {"records": [{"value": event}]}
+    payload = {
+        "value": {
+            "type": "JSON",
+            "data": json.dumps(event)
+        }
+    }
 
     auth = base64.b64encode(f"{KAFKA_API_KEY}:{KAFKA_API_SECRET}".encode()).decode()
     headers = {
