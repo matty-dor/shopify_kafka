@@ -19,7 +19,8 @@ def shopify_webhook():
     payload = {
         "value": {
             "type": "JSON",
-            "data": json.dumps(event)
+            "data": event
+            #json.dumps(event)
         }
     }
 
