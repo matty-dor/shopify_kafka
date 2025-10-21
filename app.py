@@ -13,7 +13,7 @@ KAFKA_API_SECRET = os.getenv("KAFKA_API_SECRET")
 def shopify_webhook():
     #line below was originally "event ="
     data = request.get_json()
-    if not event:
+    if not data:
         return "No JSON", 400
 
     #beg test with event_type injected
