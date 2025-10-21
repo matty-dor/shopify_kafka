@@ -11,9 +11,20 @@ KAFKA_API_SECRET = os.getenv("KAFKA_API_SECRET")
 
 @app.route("/shopify", methods=["POST"])
 def shopify_webhook():
-    event = request.get_json()
+    #line below was originally "event ="
+    data = request.get_json()
     if not event:
         return "No JSON", 400
+
+    #beg test with event_type injected
+    event = {"event_type": "checkout_created"}
+    if isinstance(data, dict):
+        event.update(data)
+    else:
+        # if Shopify ever sends non-dict JSON, keep it under "raw"
+        event["raw"] = data
+
+    #end test
 
     #original value of payload was: payload = {"records": [{"value": event}]}
     payload = {
