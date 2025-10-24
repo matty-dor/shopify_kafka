@@ -24,7 +24,8 @@ def shopify_webhook():
     new_object = {
         "email": email_address,
         "url": cart_url,
-        "price": total_price
+        "price": total_price,
+        "customer_id": 12345
     }
     #end test
 
