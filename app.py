@@ -31,7 +31,7 @@ def shopify_webhook():
     #beg test with event_type injected
     event = {"event_type": "checkout_created"}
     if isinstance(new_object, dict): #replaced "data" with "new_object"
-        event.update(data)
+        event.update(new_object)#changed from "data" to "new_object"
     else:
         # if Shopify ever sends non-dict JSON, keep it under "raw"
         event["raw"] = data
