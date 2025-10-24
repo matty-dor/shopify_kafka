@@ -16,9 +16,21 @@ def shopify_webhook():
     if not data:
         return "No JSON", 400
 
+    #beg test of turning data into a smaller object
+    email_address = data.get("email")
+    cart_url = data.get("abandoned_checkout_url")
+    total_price = data.get("total_line_items_price")
+
+    new_object = {
+        "email": email_address,
+        "url": cart_url,
+        "price": total_price
+    }
+    #end test
+
     #beg test with event_type injected
     event = {"event_type": "checkout_created"}
-    if isinstance(data, dict):
+    if isinstance(new_object, dict): #replaced "data" with "new_object"
         event.update(data)
     else:
         # if Shopify ever sends non-dict JSON, keep it under "raw"
