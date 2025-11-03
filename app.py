@@ -20,12 +20,16 @@ def shopify_webhook():
     email_address = data.get("email")
     cart_url = data.get("abandoned_checkout_url")
     total_price = data.get("total_line_items_price")
+    #adding first name to payload for Kafka message
+    first_name = data.get("customer", {}).get("first_name")
 
     new_object = {
         "email": email_address,
         "url": cart_url,
         "price": total_price,
-        "customer_id": 12345
+        "customer_id": 12345,
+        #adding first_name to the payload
+        "first_name": first_name
     }
     #end test
 
