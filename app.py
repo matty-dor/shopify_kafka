@@ -27,9 +27,9 @@ def shopify_webhook():
 
     #Added to change data type from string to number
     try:
-        total_price_number = float(Decimal(str(raw))) if raw is not None else None
+        total_price_number = float(Decimal(str(total_price_number))) if total_price_number is not None else None
     except (InvalidOperation, TypeError, ValueError):
-        total_price = None
+        total_price_number = None
 
     new_object = {
         "email": email_address,
