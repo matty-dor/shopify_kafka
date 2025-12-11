@@ -1,5 +1,7 @@
 from flask import Flask, request
 import requests, json, base64, os
+#Added line below to support changing data type of "price" from string to number
+from decimal import Decimal, InvalidOperation
 
 app = Flask(__name__)
 
@@ -23,10 +25,16 @@ def shopify_webhook():
     #adding first name to payload for Kafka message
     first_name = data.get("customer", {}).get("first_name")
 
+    #Added to change data type from string to number
+    try:
+        total_price_number = float(Decimal(str(raw))) if raw is not None else None
+    except (InvalidOperation, TypeError, ValueError):
+        total_price = None
+
     new_object = {
         "email": email_address,
         "url": cart_url,
-        "price": total_price,
+        "price": total_price_number,
         "customer_id": 12345,
         #adding first_name to the payload
         "first_name": first_name
