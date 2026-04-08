@@ -30,7 +30,7 @@ def shopify_webhook():
         "price": total_price_number,
         "customer_id": 12345,
         "first_name": "Andreas M.",
-        "onesignal_subscription_id": "2f993b6a-5766-453b-af9e-90e76f90b064",
+        "onesignal_subscription_id": "c90d846-de23-4ea7-bb05-3f126602c7c4",
         "campaign_name": "GrowthLoop Push Test"
     }
 
