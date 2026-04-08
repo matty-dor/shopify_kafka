@@ -34,7 +34,7 @@ def shopify_webhook():
         "campaign_name": "GrowthLoop Push Test"
     }
 
-    event = {"event_type": "push_test"}
+    event = {"event_type": "checkout_created"}
     if isinstance(new_object, dict):
         event.update(new_object)
     else:
