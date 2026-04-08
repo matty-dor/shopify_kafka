@@ -1,31 +1,24 @@
 from flask import Flask, request
 import requests, json, base64, os
-#Added line below to support changing data type of "price" from string to number
 from decimal import Decimal, InvalidOperation
 
 app = Flask(__name__)
 
 KAFKA_TOPIC = os.getenv("KAFKA_TOPIC", "shopify_demo")
-#Added "/records" to the end of the rest endpoint below after getting a Render error and getting help from ChatGPT
 KAFKA_REST_ENDPOINT = f"https://{os.getenv('KAFKA_REST_HOST')}/kafka/v3/clusters/{os.getenv('KAFKA_CLUSTER_ID')}/topics/{KAFKA_TOPIC}/records"
 KAFKA_API_KEY = os.getenv("KAFKA_API_KEY")
 KAFKA_API_SECRET = os.getenv("KAFKA_API_SECRET")
 
 @app.route("/shopify", methods=["POST"])
 def shopify_webhook():
-    #line below was originally "event ="
     data = request.get_json()
     if not data:
         return "No JSON", 400
 
-    #beg test of turning data into a smaller object
     email_address = data.get("email")
     cart_url = data.get("abandoned_checkout_url")
     total_price = data.get("total_line_items_price")
-    #adding first name to payload for Kafka message
-    first_name = data.get("customer", {}).get("first_name")
 
-    #Added to change data type from string to number
     try:
         total_price_number = float(Decimal(str(total_price))) if total_price is not None else None
     except (InvalidOperation, TypeError, ValueError):
@@ -36,39 +29,31 @@ def shopify_webhook():
         "url": cart_url,
         "price": total_price_number,
         "customer_id": 12345,
-        #adding first_name to the payload
-        "first_name": first_name
+        "first_name": "Andreas M.",
+        "onesignal_subscription_id": "fc90d846-de23-4ea7-bb05-3f126602c7c4",
+        "campaign_name": "GrowthLoop Push Test"
     }
-    #end test
 
-    #beg test with event_type injected
-    event = {"event_type": "checkout_created"}
-    if isinstance(new_object, dict): #replaced "data" with "new_object"
-        event.update(new_object)#changed from "data" to "new_object"
+    event = {"event_type": "push_test"}
+    if isinstance(new_object, dict):
+        event.update(new_object)
     else:
-        # if Shopify ever sends non-dict JSON, keep it under "raw"
         event["raw"] = data
 
-    #end test
-
-    #original value of payload was: payload = {"records": [{"value": event}]}
     payload = {
         "value": {
             "type": "JSON",
             "data": event
-            #json.dumps(event)
         }
     }
 
     auth = base64.b64encode(f"{KAFKA_API_KEY}:{KAFKA_API_SECRET}".encode()).decode()
     headers = {
-        #Change content type from "application/vnd.kafka.json.v2+json"
         "Content-Type": "application/json",
         "Authorization": f"Basic {auth}"
     }
 
     r = requests.post(KAFKA_REST_ENDPOINT, headers=headers, json=payload)
-    #ChatGPT Suggested code to prove where the response is landing
     app.logger.info("Kafka REST status=%s body=%s", r.status_code, r.text)
     if r.status_code >= 300:
         print("Kafka post failed:", r.text)
